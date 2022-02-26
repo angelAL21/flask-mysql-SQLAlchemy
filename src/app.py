@@ -81,6 +81,12 @@ def delete_task(id):
     
     return task_schema.jsonify(task)
 
+#welcome route.
+
+@app.route('/', methods=['GET'])
+def index():
+    return jsonify({'message': 'Welcome to my API'})
+
 #main.    
 if __name__ == '__main__':
     app.run(debug=True)
