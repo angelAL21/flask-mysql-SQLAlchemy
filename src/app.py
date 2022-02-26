@@ -53,6 +53,24 @@ def get_tasks():
     tasks_schema.dumps(all_tasks)
     return tasks_schema.jsonify(all_tasks)
 
+#get all task by id.
+@app.route('/tasks/<id>', methods=['GET'])
+def get_task_by_id(id):
+    taskbyID=Task.query.get(id)
+    return task_schema.jsonify(taskbyID)
+
+#update task by id.
+@app.route('/tasks/<id>', methods=['PUT'])
+def update_task_by_id(id):
+    task= Task.query.get(id)
+    title=request.json['title']
+    description = request.json['description']   
+    
+    task.title = title 
+    task.description = description
+    
+    db.session.commit()
+    return task_schema.jsonify(task) 
 
 #main.    
 if __name__ == '__main__':
