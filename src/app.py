@@ -1,5 +1,5 @@
 from turtle import title
-from flask import Flask
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 
@@ -30,5 +30,30 @@ class TaskSchema(ma.Schema):
         fields=('id', 'tittle', 'description')
         
 task_schema = TaskSchema() #for creating one task.
-task_schema = TaskSchema(many=True) #for creating and getting many tasks.
+tasks_schema = TaskSchema(many=True) #for creating and getting many tasks.
 
+
+#routes for our api.
+@app.route('/tasks', methods=['POST'])
+def create_task():
+    #passing data to variables
+    description = request.json['description']
+    title = request.json['title']
+    #creating new task.
+    new_task = Task(title, description)
+    db.session.add(new_task)
+    db.session.commit() #commiting the task into the database.
+    
+    return task_schema.jsonify(new_task) #returning from one task.
+
+#get all tasks.
+@app.route('/tasks', methods=['GET'])
+def get_tasks():
+    all_tasks=Task.query.all()
+    tasks_schema.dumps(all_tasks)
+    return tasks_schema.jsonify(all_tasks)
+
+
+#main.    
+if __name__ == '__main__':
+    app.run(debug=True)
